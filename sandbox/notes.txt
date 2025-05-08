@@ -231,3 +231,235 @@ Be aware that using eval() can be dangerous if this is exposed to users in a pro
     Using a JavaScript parser/interpreter library instead of direct eval
 
 Would you like me to explain any specific part in more detail or add any additional features?
+
+### Output 02
+
+Adding a UI Output Window to Your JavaScript Sandbox
+
+Here's how to extend your sandbox with a dedicated UI output area that demonstrates DOM manipulation alongside the console output:
+1. HTML Structure Update
+html
+
+<div class="sandbox-container">
+    <div class="controls">
+        <!-- Demo buttons will go here -->
+    </div>
+    
+    <div class="split-view">
+        <div class="terminal-container">
+            <div id="terminal"></div>
+            <div class="input-container">
+                <input type="text" placeholder="Enter JavaScript command...">
+                <button>Run</button>
+            </div>
+        </div>
+        
+        <div class="ui-output">
+            <h3>UI Output</h3>
+            <div id="ui-window"></div>
+        </div>
+    </div>
+</div>
+
+2. CSS Updates
+css
+
+/* Existing terminal styles... */
+
+.sandbox-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.split-view {
+    display: flex;
+    gap: 20px;
+    margin-top: 15px;
+}
+
+.terminal-container {
+    flex: 1;
+}
+
+.ui-output {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+    background: white;
+    min-height: 300px;
+}
+
+.ui-output h3 {
+    margin-top: 0;
+    color: #333;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+}
+
+#ui-window {
+    min-height: 250px;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 3px;
+}
+
+/* Make responsive */
+@media (max-width: 768px) {
+    .split-view {
+        flex-direction: column;
+    }
+}
+
+3. JavaScript Updates
+javascript
+
+(function() {
+    // ... existing terminal setup code ...
+    
+    // Reference to UI window
+    const uiWindow = document.getElementById('ui-window');
+    
+    // Function to clear UI window
+    function clearUIWindow() {
+        uiWindow.innerHTML = '';
+    }
+    
+    // Function to add demo buttons for UI manipulations
+    function createUIButton(label, callback) {
+        const btn = document.createElement('button');
+        btn.textContent = label;
+        btn.addEventListener('click', () => {
+            clearUIWindow();
+            try {
+                callback(uiWindow); // Pass the uiWindow as parameter
+            } catch (e) {
+                outputToTerminal([e.message], 'error');
+            }
+        });
+        controls.appendChild(btn);
+    }
+    
+    // Add UI demo buttons
+    createUIButton('Create Element', (target) => {
+        const div = document.createElement('div');
+        div.textContent = 'New element created!';
+        div.style.padding = '10px';
+        div.style.backgroundColor = '#e3f2fd';
+        div.style.margin = '5px 0';
+        target.appendChild(div);
+        
+        console.log('Created a new div element');
+    });
+    
+    createUIButton('Add Form', (target) => {
+        const form = document.createElement('form');
+        form.innerHTML = `
+            <h4>Sample Form</h4>
+            <div>
+                <label>Name: <input type="text"></label>
+            </div>
+            <div>
+                <label>Email: <input type="email"></label>
+            </div>
+            <button type="button">Submit</button>
+        `;
+        target.appendChild(form);
+        
+        console.log('Added a sample form to UI window');
+    });
+    
+    createUIButton('Animate', (target) => {
+        const box = document.createElement('div');
+        box.style.width = '50px';
+        box.style.height = '50px';
+        box.style.backgroundColor = '#4caf50';
+        box.style.transition = 'all 0.3s';
+        target.appendChild(box);
+        
+        let isBig = false;
+        setInterval(() => {
+            isBig = !isBig;
+            box.style.width = isBig ? '100px' : '50px';
+            box.style.height = isBig ? '100px' : '50px';
+            box.style.backgroundColor = isBig ? '#2196f3' : '#4caf50';
+        }, 1000);
+        
+        console.log('Created an animated box');
+    });
+    
+    // Add clear button
+    const clearBtn = document.createElement('button');
+    clearBtn.textContent = 'Clear UI';
+    clearBtn.addEventListener('click', clearUIWindow);
+    controls.appendChild(clearBtn);
+    
+    // ... rest of your existing code ...
+})();
+
+Key Features of This Implementation:
+
+    Split View Layout: Terminal and UI window side by side (stacks on mobile)
+
+    Dedicated UI Window: Clean area for DOM manipulation demonstrations
+
+    Pre-built UI Demos: Buttons that showcase common DOM operations
+
+    Clear Functionality: Easy way to reset the UI window
+
+    Responsive Design: Works on different screen sizes
+
+Enhanced Demo Button Examples:
+
+You could add more sophisticated demos:
+javascript
+
+createUIButton('Color Picker', (target) => {
+    target.innerHTML = `
+        <div class="color-picker">
+            <input type="color" id="colorInput" value="#4CAF50">
+            <button id="applyColor">Apply Color</button>
+            <div id="colorBox" style="width:100px;height:100px;margin-top:10px;background:#4CAF50"></div>
+        </div>
+    `;
+    
+    target.querySelector('#applyColor').addEventListener('click', () => {
+        const color = target.querySelector('#colorInput').value;
+        target.querySelector('#colorBox').style.backgroundColor = color;
+        console.log(`Changed color to ${color}`);
+    });
+});
+
+createUIButton('Todo List', (target) => {
+    target.innerHTML = `
+        <div class="todo-app">
+            <h4>Todo List</h4>
+            <input type="text" id="todoInput" placeholder="Add new task...">
+            <button id="addTodo">Add</button>
+            <ul id="todoList" style="margin-top:10px;padding-left:20px;"></ul>
+        </div>
+    `;
+    
+    const list = target.querySelector('#todoList');
+    
+    target.querySelector('#addTodo').addEventListener('click', () => {
+        const input = target.querySelector('#todoInput');
+        if (input.value.trim()) {
+            const li = document.createElement('li');
+            li.textContent = input.value;
+            list.appendChild(li);
+            input.value = '';
+            console.log(`Added new todo item`);
+        }
+    });
+});
+
+This setup gives you a complete sandbox environment where users can:
+
+    See console output in the terminal
+
+    Execute JavaScript commands
+
+    View DOM manipulation results in the UI window
+
+    Try pre-built examples of common operations

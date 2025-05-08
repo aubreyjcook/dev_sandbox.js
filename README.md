@@ -10,3 +10,5 @@ Technology-agnostic sandbox environment for developing implementations of progra
 
 - [ ] Implement demo ui or terminal input for demoing in the console or a ui window.
 - [ ] Implement async example.
+
+## Notes
